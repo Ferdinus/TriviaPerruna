@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trivia Canina</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+        }
+        .container {
+            width: 60%;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: 50px;
+        }
+        .option {
+            display: block;
+            padding: 10px;
+            margin: 10px;
+            background: #e0e0e0;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .option.correct {
+            background: green;
+            color: white;
+        }
+        .option.wrong {
+            background: red;
+            color: white;
+        }
+        button {
+            padding: 10px 20px;
+            background: blue;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-top: 10px;
+            display: none;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container animate__animated animate__fadeIn">
+        <h2 id="question">Pregunta</h2>
+        <div id="options"></div>
+        <button id="next" onclick="nextQuestion()">Siguiente</button>
+        <h3 id="score" style="display:none;"></h3>
+    </div>
+    <script>
+        const questions = [
+            {question: "¿Cuál es la raza de perro más pequeña del mundo?", options: ["Chihuahua", "Pomerania", "Yorkshire Terrier", "Caniche"], answer: 0},
+            {question: "¿Cuántos dientes tiene un perro adulto?", options: ["28", "32", "42", "36"], answer: 2},
+            {question: "¿Cuál de estos perros es conocido por su sentido del olfato excepcional?", options: ["Bulldog", "Beagle", "Dálmata", "Shih Tzu"], answer: 1},
+            {question: "¿Cada cuánto tiempo es recomendable bañar a un perro de pelo corto?", options: ["Cada semana", "Cada 3 meses", "Cada mes", "Cada 6 meses"], answer: 2},
+            {question: "¿Cuál es el alimento prohibido para los perros?", options: ["Zanahoria", "Chocolate", "Manzana", "Arroz"], answer: 1},
+            {question: "¿Qué significa cuando un perro mueve la cola de manera relajada?", options: ["Está asustado", "Está contento", "Está enfermo", "Está enojado"], answer: 1},
+            {question: "¿Cuál es la esperanza de vida promedio de un perro?", options: ["5-8 años", "10-15 años", "20-25 años", "30-35 años"], answer: 1},
+            {question: "¿Cuál de estas razas es hipoalergénica?", options: ["Labrador Retriever", "Pastor Alemán", "Caniche", "Husky Siberiano"], answer: 2},
+            {question: "¿Qué es lo primero que debes hacer antes de cortar el pelo de un perro?", options: ["Cepillarlo", "Bañarlo", "Cortarle las uñas", "Secarlo"], answer: 0},
+            {question: "¿Qué instrumento se usa para cortar el pelo de un perro en peluquería canina?", options: ["Tijeras", "Cortapelos", "Rastrillo", "Navaja de afeitar"], answer: 1}
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+
+        function loadQuestion() {
+            document.getElementById("next").style.display = "none";
+            document.getElementById("options").innerHTML = "";
+            let q = questions[currentQuestion];
+            document.getElementById("question").innerText = q.question;
+            q.options.forEach((option, index) => {
+                let div = document.createElement("div");
+                div.innerText = option;
+                div.classList.add("option");
+                div.onclick = () => checkAnswer(index, div);
+                document.getElementById("options").appendChild(div);
+            });
+        }
+
+        function checkAnswer(selected, element) {
+            let correct = questions[currentQuestion].answer;
+            document.querySelectorAll(".option").forEach(opt => opt.onclick = null);
+            if (selected === correct) {
+                element.classList.add("correct");
+                score++;
+            } else {
+                element.classList.add("wrong");
+                document.querySelectorAll(".option")[correct].classList.add("correct");
+            }
+            document.getElementById("next").style.display = "block";
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion < questions.length) {
+                loadQuestion();
+            } else {
+                showResult();
+            }
+        }
+
+        function showResult() {
+            document.querySelector(".container").innerHTML = `<h2>Resultados</h2>
+                <h3>Obtuviste ${score} de ${questions.length}</h3>
+                <p>${feedback(score)}</p>`;
+        }
+
+        function feedback(score) {
+            if (score === 10) return "¡Perfecto! Eres un experto en perros.";
+            if (score >= 7) return "¡Muy bien! Tienes buen conocimiento sobre perros.";
+            if (score >= 4) return "Bien, pero puedes mejorar.";
+            return "Necesitas aprender más sobre perros.";
+        }
+
+        loadQuestion();
+    </script>
+</body>
+</html>
